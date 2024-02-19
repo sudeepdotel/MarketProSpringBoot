@@ -24,18 +24,18 @@
         </encoder>
     </appender>
 
-    <logger name="org.nepalimarket.nepalimarketproproject" level="trace" additivity="false">
+    <logger name="org.nepalimarket.nepalimarketproproject" level="info" additivity="false">
         <appender-ref ref="FILE-ROLLING" />
         <appender-ref ref="CONSOLE" />
     </logger>
 
-<!--    <root level="error">-->
-<!--        <appender-ref ref="FILE-ROLLING" />-->
-<!--        <appender-ref ref="CONSOLE" />-->
-<!--    </root>-->
+    <root level="error">
+        <appender-ref ref="FILE-ROLLING" />
+        <appender-ref ref="CONSOLE" />
+    </root>
 
     <!-- Log Tomcat port -->
-    <logger name="org.springframework.boot" level="trace">
+    <logger name="org.springframework.boot" level="error">
         <appender-ref ref="CONSOLE" />
     </logger>
 
