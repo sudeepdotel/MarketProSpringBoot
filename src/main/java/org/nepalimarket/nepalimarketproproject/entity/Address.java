@@ -27,19 +27,16 @@ public class Address {
     private Long addressId;
 
     @Column(name = "street")
-    @NotBlank
     private String street;
 
     @Column(name = "city")
-    @NotBlank
     private String city;
 
-    @NotBlank
+
     @Column(name = "state")
     private String state;
 
-    @NotBlank(message = "must provide 5 digit zip code")
-    @Size(min = 5, max = 10)
+    @Column(name = "zip_code")
     private String zipCode;
 
 

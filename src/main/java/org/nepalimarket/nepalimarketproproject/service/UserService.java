@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.util.EnumSet;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -95,7 +96,7 @@ public class UserService {
         return userInfo.map(userInfoMapper::userInfoToUserInfoResponseDto);
     }
 
-    public boolean deleteUserById(String email) {
+    public boolean deleteUserByEmail(String email) {
         try {
             Optional<UserInfo> userOptional = userInfoRepository.findByEmail (email);
             if (userOptional.isPresent()) {
@@ -111,4 +112,6 @@ public class UserService {
             return false;
         }
     }
+
+
 }

@@ -39,8 +39,9 @@ public class SpringSecurityConfig {
                 .authorizeHttpRequests ( authorizationManagerRequestMatcherRegistry
                         -> authorizationManagerRequestMatcherRegistry
                         .requestMatchers (
-                                new AntPathRequestMatcher ( "/api/users/**" ),
+                                new AntPathRequestMatcher ( "/api/users/register" ),
                                 new AntPathRequestMatcher ( "/swagger-ui/**" )
+
 
                         ).permitAll ( )
                         .requestMatchers(
