@@ -17,7 +17,7 @@ public class SaveItemRequestDto {
     @NotBlank
     private String vendorName;
 
-    @NotBlank
+
     @Valid
     private List<ItemDto> items;
 

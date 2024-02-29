@@ -14,13 +14,13 @@ public class ItemDto {
 
     private String description;
 
-    @NotBlank
+
     private Double salesPrice;
 
-    @NotBlank
+
     private Double purchasePrice;
 
-    @NotBlank
+
     private Integer quantity;
 
 

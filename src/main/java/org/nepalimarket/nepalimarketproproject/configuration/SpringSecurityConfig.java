@@ -41,13 +41,11 @@ public class SpringSecurityConfig {
                         .requestMatchers (
                                 new AntPathRequestMatcher ( "/api/users/register" ),
                                 new AntPathRequestMatcher ( "/swagger-ui/**" )
-
-
                         ).permitAll ( )
-                        .requestMatchers(
-                                new AntPathRequestMatcher("/api/customer/**")
-
-                        ).hasAnyAuthority ("CUSTOMER", "ADMIN")
+//                        .requestMatchers(
+//                                new AntPathRequestMatcher("/api/customer/**")
+//
+//                        ).hasAnyAuthority ("CUSTOMER", "ADMIN")
                         .anyRequest ( ).authenticated ( ) )
                 .cors ( AbstractHttpConfigurer::disable )
                 .csrf ( AbstractHttpConfigurer::disable )
@@ -91,8 +89,5 @@ public class SpringSecurityConfig {
         provider.setUserDetailsService ( userDetailsService ( ) );
         provider.setPasswordEncoder ( passwordEncoder ( ) );
         return provider;
-
     }
-
-
 }

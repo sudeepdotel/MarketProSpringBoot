@@ -14,6 +14,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.nepalimarket.nepalimarketproproject.configuration.SpringSecurityConfig;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -53,7 +54,8 @@ public class UserInfo {
     private Set<UserRole> role;
 
 
-
+    @OneToMany(mappedBy = "user")
+    private List<CartItem> cartItems;
 
 
 }

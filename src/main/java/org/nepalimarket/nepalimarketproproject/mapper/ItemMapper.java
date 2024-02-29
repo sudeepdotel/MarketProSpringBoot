@@ -3,6 +3,7 @@ package org.nepalimarket.nepalimarketproproject.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.nepalimarket.nepalimarketproproject.dto.ItemDto;
+import org.nepalimarket.nepalimarketproproject.dto.ItemResponseDto;
 import org.nepalimarket.nepalimarketproproject.dto.SaveItemRequestDto;
 import org.nepalimarket.nepalimarketproproject.entity.Item;
 
@@ -20,16 +21,12 @@ public interface ItemMapper {
 
     ItemDto itemToItemDto ( Item item );
 
-
-//    //List<Item> saveItemRequestDtoToItems ( SaveItemRequestDto saveItemRequestDto );
-//
-//
-//    @Mapping(target = "items", source = "items") // Explicitly specify mapping for items
-//    Item saveItemRequestDtoToItem(SaveItemRequestDto saveItemRequestDto);
+    @Mapping ( target = "price", source = "salesPrice")
+    @Mapping(target = "categoryName", source = "category.name")
+   ItemResponseDto itemToItemResponseDto(Item item);
 
 
-
-    @Mapping(target = "category.name", source = "vendorName")
+    @Mapping(target = "category.name", source = "categoryName")
     @Mapping(target = "category", ignore = true)
     Item saveItemRequestDtoToItem(SaveItemRequestDto saveItemRequestDto);
 
