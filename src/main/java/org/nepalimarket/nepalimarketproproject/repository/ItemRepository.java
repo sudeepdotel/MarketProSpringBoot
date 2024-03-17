@@ -6,11 +6,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface ItemRepository extends JpaRepository<Item,Long> {
+public interface ItemRepository extends JpaRepository<Item, Long> {
 
-    Optional<Item> findByItemName( String itemName);
+    Optional<Item> findByItemName ( String itemName );
 
     Item findByCategoryAndItemName ( Category category, String itemName );
 
     Optional<Item> findByCategory ( Category category );
+
 }

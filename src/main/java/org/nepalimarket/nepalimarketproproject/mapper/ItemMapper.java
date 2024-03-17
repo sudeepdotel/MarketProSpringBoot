@@ -18,26 +18,25 @@ public interface ItemMapper {
     //@Mapping(target = "dateOfEntry", expression = "java(new Date())")
     Item itemDtoToItem ( ItemDto itemDto );
 
-
     ItemDto itemToItemDto ( Item item );
 
-    @Mapping ( target = "price", source = "salesPrice")
+    @Mapping(target = "price", source = "salesPrice")
     @Mapping(target = "categoryName", source = "category.name")
-   ItemResponseDto itemToItemResponseDto(Item item);
+    ItemResponseDto itemToItemResponseDto ( Item item );
 
 
     @Mapping(target = "category.name", source = "categoryName")
     @Mapping(target = "category", ignore = true)
-    Item saveItemRequestDtoToItem(SaveItemRequestDto saveItemRequestDto);
+    Item saveItemRequestDtoToItem ( SaveItemRequestDto saveItemRequestDto );
 
-    default List<Item> saveItemRequestDtoToItems(SaveItemRequestDto saveItemRequestDto) {
-        if (saveItemRequestDto == null || saveItemRequestDto.getItems() == null) {
-            return Collections.emptyList();
+    default List<Item> saveItemRequestDtoToItems ( SaveItemRequestDto saveItemRequestDto ) {
+        if (saveItemRequestDto == null || saveItemRequestDto.getItems ( ) == null) {
+            return Collections.emptyList ( );
         }
 
-        return saveItemRequestDto.getItems().stream()
-                .map(this::itemDtoToItem)
-                .collect( Collectors.toList());
+        return saveItemRequestDto.getItems ( ).stream ( )
+                .map ( this::itemDtoToItem )
+                .collect ( Collectors.toList ( ) );
     }
 
 }

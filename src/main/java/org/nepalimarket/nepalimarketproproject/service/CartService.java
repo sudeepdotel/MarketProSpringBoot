@@ -1,6 +1,5 @@
 package org.nepalimarket.nepalimarketproproject.service;
 
-import lombok.RequiredArgsConstructor;
 import org.hibernate.cache.spi.access.UnknownAccessTypeException;
 import org.nepalimarket.nepalimarketproproject.dto.CartItemDto;
 import org.nepalimarket.nepalimarketproproject.entity.CartItem;
@@ -32,44 +31,44 @@ public class CartService {
         this.cartItemMapper = cartItemMapper;
     }
 
-    public CartItemDto addToCart( Long itemId, String loggedInUsername, int quantity) {
+    public CartItemDto addToCart ( Long itemId, String loggedInUsername, int quantity ) {
         // Check if the logged-in user has the Customer role
-        boolean isCustomer = userRepository.existsByEmailAndRoleRoleName(loggedInUsername, UserRole.CUSTOMER);
+        boolean isCustomer = userRepository.existsByEmailAndRoleRoleName ( loggedInUsername, UserRole.CUSTOMER );
 
         if (!isCustomer) {
             // Throw an exception if the user doesn't have the customer role
-            throw new UnknownAccessTypeException ("Only customers can add items to the cart.");
+            throw new UnknownAccessTypeException ( "Only customers can add items to the cart." );
         }
 
         // Get the user
-        UserInfo customer = userRepository.findByEmail(loggedInUsername)
-                .orElseThrow(() -> new RuntimeException("User not found: " + loggedInUsername));
+        UserInfo customer = userRepository.findByEmail ( loggedInUsername )
+                .orElseThrow ( ( ) -> new RuntimeException ( "User not found: " + loggedInUsername ) );
 
         // Get the item
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new RuntimeException("Item not found: " + itemId));
+        Item item = itemRepository.findById ( itemId )
+                .orElseThrow ( ( ) -> new RuntimeException ( "Item not found: " + itemId ) );
 
-        if (item.getQuantity() < quantity) {
-            throw new OutOfStockException ("Item is out of stock");
+        if (item.getQuantity ( ) < quantity) {
+            throw new OutOfStockException ( "Item is out of stock" );
         }
         // Check if the item is already in the cart
-        Optional<CartItem> existingCartItem = cartItemRepository.findByUserAndItem(customer, item);
+        Optional<CartItem> existingCartItem = cartItemRepository.findByUserAndItem ( customer, item );
 
         CartItem cartItem;
-        if (existingCartItem.isPresent()) {
+        if (existingCartItem.isPresent ( )) {
             // If the item is already in the cart, update the quantity
             cartItem = existingCartItem.get ( );
-            cartItem.setQuantity(cartItem.getQuantity() + quantity);
+            cartItem.setQuantity ( cartItem.getQuantity ( ) + quantity );
         } else {
             // If the item is not in the cart, create a new cart item
             cartItem = new CartItem ( );
-            cartItem.setItem(item);
-            cartItem.setUser(customer);
-            cartItem.setQuantity(quantity);
+            cartItem.setItem ( item );
+            cartItem.setUser ( customer );
+            cartItem.setQuantity ( quantity );
         }
-        cartItemRepository.save(cartItem);
+        cartItemRepository.save ( cartItem );
 
         // Create a CartItemDto to return to the client
-        return cartItemMapper.cartItemToCartItemDto(item, quantity);
+        return cartItemMapper.cartItemToCartItemDto ( item, quantity );
     }
 }

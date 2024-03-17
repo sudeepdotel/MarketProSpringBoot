@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
-import org.nepalimarket.nepalimarketproproject.configuration.SpringSecurityConfig;
 
 import java.util.List;
 import java.util.Set;
@@ -33,18 +32,18 @@ public class UserInfo {
     @Size(max = 60)
     private String fullName;
 
-    @Pattern ( regexp = "^\\d{10}$")
+    @Pattern(regexp = "^\\d{10}$")
     private String phone;
 
     @Email
     @Column(unique = true)
     private String email;
 
-    @Pattern ( regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$" , message = "\"Password must contain at least 8 characters, including at least one uppercase letter, one lowercase letter, and one digit.\"")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).{8,}$", message = "\"Password must contain at least 8 characters, including at least one uppercase letter, one lowercase letter, and one digit.\"")
     private String password;
 
     @Valid
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL )
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Address address;
 
     @ElementCollection

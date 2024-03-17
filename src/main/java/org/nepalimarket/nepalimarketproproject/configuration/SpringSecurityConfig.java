@@ -1,22 +1,25 @@
 package org.nepalimarket.nepalimarketproproject.configuration;
 
 
+import org.nepalimarket.nepalimarketproproject.filter.JwtFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
@@ -24,6 +27,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @EnableMethodSecurity(prePostEnabled = false)
 public class SpringSecurityConfig {
 
+    @Autowired
+    private JwtFilter jwtFilter;
 
     @Bean
     public static PasswordEncoder passwordEncoder ( ) {
@@ -31,52 +36,35 @@ public class SpringSecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain ( HttpSecurity http ) throws Exception {
+    public SecurityFilterChain filterChain ( HttpSecurity http ) throws Exception {
         http
+
                 .httpBasic ( httpSecurityHttpBasicConfigurer -> {
                 } )
-//                .and()
                 .authorizeHttpRequests ( authorizationManagerRequestMatcherRegistry
                         -> authorizationManagerRequestMatcherRegistry
                         .requestMatchers (
                                 new AntPathRequestMatcher ( "/api/users/register" ),
-                                new AntPathRequestMatcher ( "/swagger-ui/**" )
+                                new AntPathRequestMatcher ( "/api/users/generateToken" ),
+                                new AntPathRequestMatcher ( "/swagger-ui/**" ),
+                                new AntPathRequestMatcher ( "/items/getAllItems " ),
+                                new AntPathRequestMatcher ( "/items/add " )
+
                         ).permitAll ( )
-//                        .requestMatchers(
-//                                new AntPathRequestMatcher("/api/customer/**")
-//
-//                        ).hasAnyAuthority ("CUSTOMER", "ADMIN")
+                        .requestMatchers (
+                                new AntPathRequestMatcher ( HttpHeaders.ALLOW ) )
+                        .permitAll ( )
                         .anyRequest ( ).authenticated ( ) )
-                .cors ( AbstractHttpConfigurer::disable )
+                .authenticationProvider ( this.authenticationProvider ( ) )
+                .sessionManagement ( sessions -> sessions.sessionCreationPolicy ( SessionCreationPolicy.STATELESS ) )
+                .addFilterBefore ( jwtFilter, UsernamePasswordAuthenticationFilter.class )
                 .csrf ( AbstractHttpConfigurer::disable )
+                //.cors ( AbstractHttpConfigurer::disable )
                 .formLogin ( AbstractHttpConfigurer::disable );
+
 
         return http.build ( );
     }
-
-
-
-//    @Bean
-//    public SecurityFilterChain securityFilterChain ( HttpSecurity http ) throws Exception {
-//        return http
-//                //.httpBasic ( httpSecurityHttpBasicConfigurer -> {} )
-//
-//                .authorizeHttpRequests ( httpRequest -> {
-//                    httpRequest
-//                            .requestMatchers ( "/api/users/register", "/swagger-ui/index.html" ).permitAll ( )
-//                            .requestMatchers ( "/public/home" ).hasAnyRole ("ADMIN","CUSTOMER" )
-//                            .anyRequest ().authenticated ();
-//
-//                })
-//                //.requestMatchers ("/api/**").hasAnyRole ( "ADMIN","CUSTOMER" )
-//
-//
-//                .csrf ( AbstractHttpConfigurer::disable )
-//                .cors ( AbstractHttpConfigurer::disable )
-//                .formLogin ( AbstractHttpConfigurer::disable )
-//                .build ( );
-//
-//    }
 
     @Bean
     public UserDetailsService userDetailsService ( ) {
@@ -90,4 +78,12 @@ public class SpringSecurityConfig {
         provider.setPasswordEncoder ( passwordEncoder ( ) );
         return provider;
     }
+
+    @Bean
+    public AuthenticationManager authenticationManager ( AuthenticationConfiguration configuration ) throws Exception {
+        return configuration.getAuthenticationManager ( );
+
+    }
 }
+
+
