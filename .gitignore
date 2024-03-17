@@ -6,6 +6,7 @@ target/
 
 logs
 
+
 src/main/resources/application.properties
 
 ### STS ###
