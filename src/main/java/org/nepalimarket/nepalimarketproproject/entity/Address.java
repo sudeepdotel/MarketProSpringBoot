@@ -2,10 +2,6 @@ package org.nepalimarket.nepalimarketproproject.entity;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,19 +23,16 @@ public class Address {
     private Long addressId;
 
     @Column(name = "street")
-    @NotBlank
     private String street;
 
     @Column(name = "city")
-    @NotBlank
     private String city;
 
-    @NotBlank
+
     @Column(name = "state")
     private String state;
 
-    @NotBlank(message = "must provide 5 digit zip code")
-    @Size(min = 5, max = 10)
+    @Column(name = "zip_code")
     private String zipCode;
 
 
