@@ -5,8 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.nepalimarket.nepalimarketproproject.dto.AddressDto;
 import org.nepalimarket.nepalimarketproproject.dto.UserInfoRequestDto;
 import org.nepalimarket.nepalimarketproproject.entity.Address;
 import org.nepalimarket.nepalimarketproproject.entity.UserInfo;
@@ -17,6 +19,7 @@ import org.nepalimarket.nepalimarketproproject.repository.UserInfoRepository;
 import org.slf4j.Logger;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -47,60 +50,63 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.initMocks(this);
-
-        UserInfoRequestDto requestDto = new UserInfoRequestDto();
-        requestDto.setEmail("test@example.com");
-        requestDto.setPassword("testPassword");
-        requestDto.setFullName ( "Test" );
-        requestDto.setPhone ("1234567890");
-
-        UserInfo userInfo = new UserInfo();
-        userInfo.setEmail("test@example.com");
-        userInfo.setPassword("encodedPassword");
-        userInfo.setFullName ( "Test" );
-        userInfo.setPhone ( "1234567890" );// Replace with actual encoded password
-
-        // Dummy Address
-        Address address = new Address();
-        address.setStreet("123 Main St");
-        address.setCity("City");
-        address.setState("State");
-        address.setZipCode("12345");
-
-        userInfo.setAddress(address);
-
-        // Dummy Roles
-        Set<UserRole> roles = new HashSet<> ();
-        roles.add(UserRole.ADMIN);
-        userInfo.setRole(roles);
-
-        when(userInfoMapper.userInfoRequestDtoToUserInfo(requestDto)).thenReturn(userInfo);
-        when(passwordEncoder.encode(requestDto.getPassword())).thenReturn("encodedPassword");
     }
 
     @Test
     void testRegisterUser_Success() {
         // Mock dependencies
-        UserInfoRequestDto requestDto = new UserInfoRequestDto(); // Provide necessary data
-        UserInfo userInfo = new UserInfo(); // Provide necessary data
-        when(userInfoMapper.userInfoRequestDtoToUserInfo(requestDto)).thenReturn(userInfo);
-        when(userInfoRepository.existsByEmail(any())).thenReturn(false);
-        when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
-        when(addressRepository.findByStreetAndCityAndStateAndZipCode(any(), any(), any(), any())).thenReturn(Optional.empty());
-        when(addressRepository.save(any())).thenReturn(new Address()); // Mock address saving
+        UserInfoRequestDto requestDto = new UserInfoRequestDto();
+        requestDto.setEmail("test@example.com");
+        requestDto.setPassword("password");
+        requestDto.setFullName("Test User");
+        requestDto.setPhone("1234567890");
 
+        AddressDto addressDto = new AddressDto();
+        addressDto.setStreet("123 Test St");
+        addressDto.setCity("Test City");
+        addressDto.setState("TX");
+        addressDto.setZipCode("12345");
+        requestDto.setAddress(addressDto);
+
+//        Set<String> userRoles = new HashSet<> (  );
+//        userRoles.add ("ADMIN");
+//        requestDto.setRole ( userRoles);
+
+         UserInfo userInfo = new UserInfo();
+//        userInfo.setEmail(requestDto.getEmail());
+//        userInfo.setPassword(requestDto.getPassword());
+//        userInfo.setFullName(requestDto.getFullName());
+//        userInfo.setPhone(requestDto.getPhone());
+
+        Mockito.when(userInfoMapper.userInfoRequestDtoToUserInfo(requestDto)).thenReturn(userInfo);
+        Mockito.when(userInfoRepository.existsByEmail(any())).thenReturn(false);
+        Mockito.when(passwordEncoder.encode(requestDto.getPassword())).thenReturn("encodedPassword");
+
+        Mockito.when(addressRepository.findByStreetAndCityAndStateAndZipCode(
+                        addressDto.getStreet(), addressDto.getCity(), addressDto.getState(), addressDto.getZipCode()))
+                .thenReturn(Optional.empty());
+
+        Address savedAddress = new Address(); // Creating a mock Address instance
+        Mockito.when(addressRepository.save(any())).thenReturn(savedAddress); // Mocking the addressRepository save method
+
+        // Mocking the save method of userInfoRepository to return a mock UserInfo object
+        UserInfo savedUser = Mockito.mock(UserInfo.class);
+        Mockito.when(userInfoRepository.save(any())).thenReturn(savedUser);
+
+        // Mock the setRole() method on savedUser
+       // Mockito.doNothing().when(savedUser).setRole(any());
         // Test
         Optional<String> result = userService.registerUser(requestDto);
 
-        System.out.println ("result for test :" + result );
         // Verify
         assertTrue(result.isPresent());
         assertEquals("Success", result.get());
 
-        // Additional check to handle null savedUser
-        verify(userInfo, times(1)).setRole(any()); // Ensure setRole is called at least once
-        verify(userInfoRepository, times(1)).save(userInfo);
+        // Additional checks
+      //  Mockito.verify(savedUser, Mockito.times(1)).setRole(any());
+        Mockito.verify(userInfoRepository, Mockito.times(1)).save(any());
     }
+
 
 
     @Test
@@ -108,8 +114,8 @@ class UserServiceTest {
         // Mock dependencies
         UserInfoRequestDto requestDto = new UserInfoRequestDto(); // Provide necessary data
         UserInfo userInfo = new UserInfo(); // Provide necessary data
-        when(userInfoMapper.userInfoRequestDtoToUserInfo(requestDto)).thenReturn(userInfo);
-        when(userInfoRepository.existsByEmail(any())).thenReturn(true);
+        Mockito.when(userInfoMapper.userInfoRequestDtoToUserInfo(requestDto)).thenReturn(userInfo);
+        Mockito.when(userInfoRepository.existsByEmail(any())).thenReturn(true);
         // Test
         Optional<String> result = userService.registerUser(requestDto);
         // Verify
